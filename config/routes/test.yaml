@@ -1,0 +1,3 @@
+test:
+  path: /
+  controller: App\Controller\TestController::buildContent
