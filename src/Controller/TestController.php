@@ -14,5 +14,4 @@ class TestController extends AbstractController
             'use_arcgis' => false
         ]);
     }
-
 }
