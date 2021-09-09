@@ -16,11 +16,10 @@
         {% endblock %}
     </head>
     <body>
-        {% block body %}
         <div class="container pt-2 mt-3 rounded-3">
-            <nav class="navbar navbar-expand-lg navbar-light bg-info rounded-3">
+            <nav class="navbar navbar-expand-lg navbar-dark bg-info rounded-3">
                 <div class="container-fluid">
-                    <a class="navbar-brand" href="#">Navbar scroll</a>
+                    <a class="navbar-brand" href="/"><img src="{{ asset('images/logo/apple-touch-icon.png') }}" /></a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarScroll" aria-controls="navbarScroll" aria-expanded="false" aria-label="Toggle navigation">
                         <span class="navbar-toggler-icon"></span>
                     </button>
@@ -47,20 +46,26 @@
                                 <a class="nav-link disabled">Link</a>
                             </li>
                         </ul>
-                        <form class="d-flex">
-                            <input class="form-control me-2" type="search" placeholder="Search" aria-label="Search">
-                            <button class="btn btn-outline-success" type="submit">Search</button>
-                        </form>
+                        {% if app.user %}
+                            <a href="/logout"> <button class="btn btn-outline-danger" type="submit">Logout</button></a>
+                        {% else %}
+                            <a href="/login"> <button class="btn btn-outline-primary" type="submit">Login</button></a>
+                        {% endif %}
+
                     </div>
                 </div>
             </nav>
-            ++<br />++<br />++<br />++<br />++<br />++<br />++<br />
-            ++<br />++<br />++<br />++<br />++<br />++<br />++<br />
-            ++<br />++<br />++<br />++<br />++<br />++<br />++<br />
-            ++<br />++<br />++<br />++<br />++<br />++<br />++<br />
-            ++<br />++<br />++<br />++<br />++<br />++<br />++<br />
+            <nav aria-label="breadcrumb">
+                <ol class="breadcrumb">
+                    <li class="breadcrumb-item"><a href="#">Home</a></li>
+                    <li class="breadcrumb-item"><a href="#">Library</a></li>
+                    <li class="breadcrumb-item active" aria-current="page">Data</li>
+                </ol>
+            </nav>
+            {% block body %}
 
+            {% endblock %}
         </div>
-        {% endblock %}
+
     </body>
 </html>
