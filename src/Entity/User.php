@@ -17,6 +17,7 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
+    public const INVITE = 'invitation_code';
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

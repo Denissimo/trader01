@@ -18,7 +18,8 @@ class RegistrationController extends AbstractController
     public function register(Request $request, UserPasswordEncoderInterface $passwordEncoder): Response
     {
         $user = new User();
-        $form = $this->createForm(RegistrationFormType::class, $user);
+        $invitationCode = $request->query->get(User::INVITE);
+        $form = $this->createForm(RegistrationFormType::class, $user, ['attr' => [User::INVITE => $invitationCode]]);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
@@ -30,7 +31,18 @@ class RegistrationController extends AbstractController
                 )
             );
 
+            $hash = hash("crc32", $user->getUserIdentifier());
+            $user->setHash($hash);
+
             $entityManager = $this->getDoctrine()->getManager();
+            $parent = $entityManager->getRepository(User::class)
+                ->findOneBy(
+                    [
+                        'hash' => $form->get('invite')->getData()
+                    ]
+                );
+            $user->setParent($parent);
+
             $entityManager->persist($user);
             $entityManager->flush();
             // do anything else you need here, like send an email
