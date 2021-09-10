@@ -6,6 +6,7 @@ use App\Repository\UserRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -56,9 +57,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $hash;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Purse::class, mappedBy="user", orphanRemoval=true)
+     */
+    private $purses;
+
+    /**
+     * @ORM\Column(type="datetime_immutable", options={"default": "CURRENT_TIMESTAMP"})
+     *  @Gedmo\Timestampable(on="create")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime_immutable", options={"default": "CURRENT_TIMESTAMP"})
+     *  @Gedmo\Timestampable(on="update")
+     */
+    private $updatedAt;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
+        $this->purses = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -195,6 +214,60 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setHash(?string $hash): self
     {
         $this->hash = $hash;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Purse[]
+     */
+    public function getPurses(): Collection
+    {
+        return $this->purses;
+    }
+
+    public function addPurse(Purse $purse): self
+    {
+        if (!$this->purses->contains($purse)) {
+            $this->purses[] = $purse;
+            $purse->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removePurse(Purse $purse): self
+    {
+        if ($this->purses->removeElement($purse)) {
+            // set the owning side to null (unless already changed)
+            if ($purse->getUser() === $this) {
+                $purse->setUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
