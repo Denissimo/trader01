@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Currency;
+
 use App\Entity\Purse;
 use App\Entity\User;
+use App\Service\CurrencyGenerator;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
@@ -32,15 +34,19 @@ class PurseRepository extends ServiceEntityRepository
     public function createPursesForUser(User $user)
     {
         $currencies = $this->getEntityManager()->getRepository(Currency::class)->findAll();
+        $currencyGenerator = new CurrencyGenerator();
 
         foreach ($currencies as $currency) {
             $purse = (new Purse())->setUser($user)
-                ->setCurrency($currency);
+                ->setCurrency($currency)
+                ->setAmount(
+                    $currencyGenerator->amount(
+                        $currency->getCode()
+                    )
+                );
 
             $this->getEntityManager()->persist($purse);
         }
-
-        $this->getEntityManager()->flush();
 
         return $this;
     }

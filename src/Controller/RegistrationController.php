@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Account;
 use App\Entity\Purse;
 use App\Entity\User;
 use App\Form\RegistrationFormType;
@@ -59,15 +60,14 @@ class RegistrationController extends AbstractController
                 )
             );
 
-            $hash = hash("crc32", $user->getUserIdentifier());
-            $user->setHash($hash);
-
 
             $user->setParent($parent ?? null);
 
             $entityManager->persist($user);
             $entityManager->getRepository(Purse::class)
                 ->createPursesForUser($user);
+            $entityManager->getRepository(Account::class)
+                ->createAccountForUser($user);
 
             $entityManager->flush();
             // do anything else you need here, like send an email

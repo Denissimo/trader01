@@ -19,6 +19,9 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     public const INVITE = 'invitation_code';
+
+    public const DAFAULT_PASSWORD = '123456';
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue
@@ -74,6 +77,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $updatedAt;
 
+    /**
+     * @ORM\OneToOne(targetEntity=Account::class, mappedBy="user", cascade={"persist", "remove"})
+     */
+    private $account;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
@@ -96,6 +104,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setUsername(string $username): self
     {
         $this->username = $username;
+        $this->generateHash();
 
         return $this;
     }
@@ -270,5 +279,27 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->updatedAt = $updatedAt;
 
         return $this;
+    }
+
+    public function getAccount(): ?Account
+    {
+        return $this->account;
+    }
+
+    public function setAccount(Account $account): self
+    {
+        // set the owning side of the relation if necessary
+        if ($account->getUser() !== $this) {
+            $account->setUser($this);
+        }
+
+        $this->account = $account;
+
+        return $this;
+    }
+
+    private function generateHash()
+    {
+        $this->hash = hash("crc32", (string) $this->username);
     }
 }

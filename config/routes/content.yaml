@@ -1,0 +1,7 @@
+main:
+  path: /
+  controller: App\Controller\ContentController::buildMain
+
+account:
+  path: /account
+  controller: App\Controller\ContentController::buildAccount

@@ -20,7 +20,7 @@ class CurrencyRepository extends ServiceEntityRepository
     }
 
     // /**
-    //  * @return Currency[] Returns an array of Currency objects
+    //  * @return CurrencyGenerator[] Returns an array of CurrencyGenerator objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class CurrencyRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Currency
+    public function findOneBySomeField($value): ?CurrencyGenerator
     {
         return $this->createQueryBuilder('c')
             ->andWhere('c.exampleField = :val')
