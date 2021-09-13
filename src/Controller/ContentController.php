@@ -58,6 +58,7 @@ class ContentController extends AbstractController
     public function buildReward(RewardCounter $rewardCounter)
     {
         $rewards = $rewardCounter->getDeals();
+        $rewardCounter->buildTree($rewards);
 
         return $this->render('reward.html.twig', [
             'rewards' => $rewards

@@ -4,12 +4,12 @@ namespace App\Service;
 
 use App\Entity\Account;
 use App\Entity\User;
-use App\Response\DealList;
+use App\DTO\DealList;
 use Doctrine\ORM\EntityManagerInterface;
 use Doctrine\Common\Collections\Criteria;
 use App\Entity\Deal;
-use App\Response\Deal as DealResponse;
-use App\Response\ApiResponse;
+use App\DTO\Deal as DealResponse;
+use App\DTO\ApiResponse;
 
 class DealGenerator
 {

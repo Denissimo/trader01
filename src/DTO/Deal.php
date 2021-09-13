@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Response;
+namespace App\DTO;
 
 use \DateTime;
 use \App\Entity\Deal as DealEntity;
