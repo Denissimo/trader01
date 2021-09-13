@@ -11,6 +11,10 @@ use Gedmo\Mapping\Annotation as Gedmo;
  */
 class Account
 {
+    public const SCALE_USD = 2;
+    public const SCALE_BTC = 8;
+    public const SCALE_ETH = 18;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

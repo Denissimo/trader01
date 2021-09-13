@@ -5,3 +5,11 @@ main:
 account:
   path: /account
   controller: App\Controller\ContentController::buildAccount
+
+deal:
+  path: /deal
+  controller: App\Controller\ContentController::buildDeal
+
+reward:
+  path: /reward
+  controller: App\Controller\ContentController::buildReward
