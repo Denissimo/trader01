@@ -33,9 +33,9 @@ class AccountRepository extends ServiceEntityRepository
     {
         $currencyGenerator = new CurrencyGenerator();
         $account = (new Account())->setUser($user)
-            ->setUsd($currencyGenerator->amount(CurrencyGenerator::USD))
-            ->setBtc($currencyGenerator->amount(CurrencyGenerator::BTC))
-            ->setEth($currencyGenerator->amount(CurrencyGenerator::ETH));
+            ->setAmountUsd($currencyGenerator->amount(CurrencyGenerator::USD))
+            ->setAmountBtc($currencyGenerator->amount(CurrencyGenerator::BTC))
+            ->setAmountEth($currencyGenerator->amount(CurrencyGenerator::ETH));
 
         $this->getEntityManager()->persist($account);
 

@@ -82,7 +82,8 @@ class CreateUsersCommand extends Command
     private function create(?User $user = null, int $number = self::DEFAULT_QTY)
     {
         try {
-            $newUsersNumber = rand(0, 5);
+            $min = $user instanceof User ? 0 : 3;
+            $newUsersNumber = rand($min, 3);
             for ($i = 0; $i <= $newUsersNumber; $i++) {
                 if (self::$createdQty >= $number) {
                     return $this;
@@ -102,7 +103,6 @@ class CreateUsersCommand extends Command
                     );
                 $this->entityManager->persist($user);
 
-
                 $this->entityManager->getRepository(Purse::class)
                     ->createPursesForUser($user);
                 $this->entityManager->getRepository(Account::class)
@@ -113,7 +113,8 @@ class CreateUsersCommand extends Command
                     sprintf('Created user: %s; Parent: %s', $user->getUserIdentifier(), $parentId)
                 );
 
-                $hasChild = rand(0, 10) > 3;
+
+                $hasChild = rand($min, 10) > 3;
 
                 if($hasChild) {
                     $this->create($user, $number);

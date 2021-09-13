@@ -2,14 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\AccountRepository;
+use App\Repository\DealRepository;
 use Doctrine\ORM\Mapping as ORM;
 use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * @ORM\Entity(repositoryClass=AccountRepository::class)
+ * @ORM\Entity(repositoryClass=DealRepository::class)
  */
-class Account
+class Deal
 {
     /**
      * @ORM\Id
@@ -19,25 +19,30 @@ class Account
     private $id;
 
     /**
-     * @ORM\OneToOne(targetEntity=User::class, inversedBy="account", cascade={"persist", "remove"})
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="deals")
      * @ORM\JoinColumn(nullable=false)
      */
     private $user;
 
     /**
-     * @ORM\Column(type="decimal", precision=21, scale=5, options={"default":0})
+     * @ORM\Column(type="decimal", precision=18, scale=2, options={"default":0})
      */
     private $amountUsd;
 
     /**
-     * @ORM\Column(type="decimal", precision=22, scale=11, options={"default":0})
+     * @ORM\Column(type="decimal", precision=19, scale=8, options={"default":0})
      */
     private $amountBtc;
 
     /**
-     * @ORM\Column(type="decimal", precision=32, scale=21, options={"default":0})
+     * @ORM\Column(type="decimal", precision=29, scale=18, options={"default":0})
      */
     private $amountEth;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $purpose;
 
     /**
      * @ORM\Column(type="datetime_immutable")
@@ -47,7 +52,6 @@ class Account
 
     /**
      * @ORM\Column(type="datetime_immutable")
-     * @Gedmo\Timestampable(on="update")
      */
     private $updatedAt;
 
@@ -61,7 +65,7 @@ class Account
         return $this->user;
     }
 
-    public function setUser(User $user): self
+    public function setUser(?User $user): self
     {
         $this->user = $user;
 
@@ -100,6 +104,18 @@ class Account
     public function setAmountEth(float $amountEth): self
     {
         $this->amountEth = $amountEth;
+
+        return $this;
+    }
+
+    public function getPurpose(): ?string
+    {
+        return $this->purpose;
+    }
+
+    public function setPurpose(?string $purpose): self
+    {
+        $this->purpose = $purpose;
 
         return $this;
     }

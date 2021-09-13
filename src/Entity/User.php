@@ -82,10 +82,16 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $account;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Deal::class, mappedBy="user", orphanRemoval=true)
+     */
+    private $deals;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
         $this->purses = new ArrayCollection();
+        $this->deals = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -301,5 +307,35 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private function generateHash()
     {
         $this->hash = hash("crc32", (string) $this->username);
+    }
+
+    /**
+     * @return Collection|Deal[]
+     */
+    public function getDeals(): Collection
+    {
+        return $this->deals;
+    }
+
+    public function addDeal(Deal $deal): self
+    {
+        if (!$this->deals->contains($deal)) {
+            $this->deals[] = $deal;
+            $deal->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeDeal(Deal $deal): self
+    {
+        if ($this->deals->removeElement($deal)) {
+            // set the owning side to null (unless already changed)
+            if ($deal->getUser() === $this) {
+                $deal->setUser(null);
+            }
+        }
+
+        return $this;
     }
 }
