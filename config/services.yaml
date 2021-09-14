@@ -6,6 +6,7 @@
 parameters:
     path_deal: '%env(PATH_DEAL)%'
     url_api: '%env(URL_API)%'
+    url_self: '%env(URL_SELF)%'
 
 services:
     # default configuration for services in *this* file
@@ -15,6 +16,7 @@ services:
         bind:
             $pathDeal: '%path_deal%'
             $urlApi: '%url_api%'
+            $urlSelf: '%url_self%'
 
     # makes classes in src/ available to be used as services
     # this creates a service per class whose id is the fully-qualified class name

@@ -48,13 +48,14 @@ class ContentController extends AbstractController
         return $this->render('main.html.twig', []);
     }
 
-    public function buildAccount(Request $request)
+    public function buildAccount(string $urlSelf)
     {
         $user = $this->tokenStorage->getToken()->getUser();
         $childrenCombile = $this->loadChildren($user);
         $accuralCombile = $this->loadAccurals($user);
 
         return $this->render('account.html.twig', [
+            'url_self' => $urlSelf,
             'user' => $user,
             'children' => $childrenCombile,
             'accurals' => $accuralCombile

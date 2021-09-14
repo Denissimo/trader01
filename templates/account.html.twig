@@ -8,12 +8,12 @@
                     <h5 class="card-title">Send referal code to your friend</h5>
                     <div class="row mb-3">
                         <div class="col-12">
-                            <input type="text" class="form-control" id="referal_link" value="{{ user.hash }}">
+                            <input type="text" class="form-control" id="referal_link" value="{{ url_self ~ '/register?invitation_code=' ~ user.hash }}">
                         </div>
                     </div>
                     <div class="row">
                         <div class="col-12">
-                            <a href="#" class="btn btn-primary">Copy</a>
+                            <a href="#" class="btn btn-primary" id="copy_btn">Copy</a>
                         </div>
                     </div>
                 </div>
