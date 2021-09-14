@@ -53,6 +53,18 @@ class UserTreeRepository extends ServiceEntityRepository
         return $this;
     }
 
+    public function findParents(User $user)
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.childUser = :val')
+            ->setParameter('val', $user)
+            ->orderBy('u.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+
     // /**
     //  * @return UserTree[] Returns an array of UserTree objects
     //  */

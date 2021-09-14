@@ -1,0 +1,161 @@
+<?php
+
+namespace App\Entity;
+
+use App\Repository\AccuralsRepository;
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * @ORM\Entity(repositoryClass=AccuralsRepository::class)
+ */
+class Accurals
+{
+    /**
+     * @ORM\Id
+     * @ORM\GeneratedValue
+     * @ORM\Column(type="integer")
+     */
+    private $id;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class, inversedBy="accurals")
+     * @ORM\JoinColumn(nullable=false)
+     */
+    private $user;
+
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $amountUsd;
+
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $amountBtc;
+
+    /**
+     * @ORM\Column(type="float")
+     */
+    private $amountEtn;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=User::class)
+     */
+    private $sourceUser;
+
+    /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     */
+    private $comment;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private $createdAt;
+
+    /**
+     * @ORM\Column(type="datetime_immutable")
+     */
+    private $updatedAt;
+
+    public function getId(): ?int
+    {
+        return $this->id;
+    }
+
+    public function getUser(): ?User
+    {
+        return $this->user;
+    }
+
+    public function setUser(?User $user): self
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    public function getAmountUsd(): ?float
+    {
+        return $this->amountUsd;
+    }
+
+    public function setAmountUsd(float $amountUsd): self
+    {
+        $this->amountUsd = $amountUsd;
+
+        return $this;
+    }
+
+    public function getAmountBtc(): ?float
+    {
+        return $this->amountBtc;
+    }
+
+    public function setAmountBtc(float $amountBtc): self
+    {
+        $this->amountBtc = $amountBtc;
+
+        return $this;
+    }
+
+    public function getAmountEtn(): ?float
+    {
+        return $this->amountEtn;
+    }
+
+    public function setAmountEtn(float $amountEtn): self
+    {
+        $this->amountEtn = $amountEtn;
+
+        return $this;
+    }
+
+    public function getSourceUser(): ?User
+    {
+        return $this->sourceUser;
+    }
+
+    public function setSourceUser(?User $sourceUser): self
+    {
+        $this->sourceUser = $sourceUser;
+
+        return $this;
+    }
+
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    public function setComment(?string $comment): self
+    {
+        $this->comment = $comment;
+
+        return $this;
+    }
+
+    public function getCreatedAt(): ?\DateTimeImmutable
+    {
+        return $this->createdAt;
+    }
+
+    public function setCreatedAt(\DateTimeImmutable $createdAt): self
+    {
+        $this->createdAt = $createdAt;
+
+        return $this;
+    }
+
+    public function getUpdatedAt(): ?\DateTimeImmutable
+    {
+        return $this->updatedAt;
+    }
+
+    public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
+    {
+        $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+}

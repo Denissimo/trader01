@@ -99,6 +99,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     private $parentUsers;
 
+    /**
+     * @ORM\OneToMany(targetEntity=Accurals::class, mappedBy="user", orphanRemoval=true)
+     */
+    private $accurals;
+
     public function __construct()
     {
         $this->children = new ArrayCollection();
@@ -106,6 +111,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->deals = new ArrayCollection();
         $this->childUsers = new ArrayCollection();
         $this->parentUsers = new ArrayCollection();
+        $this->accurals = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -407,6 +413,36 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($parentUser->getParentUser() === $this) {
                 $parentUser->setParentUser(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Accurals[]
+     */
+    public function getAccurals(): Collection
+    {
+        return $this->accurals;
+    }
+
+    public function addAccural(Accurals $accural): self
+    {
+        if (!$this->accurals->contains($accural)) {
+            $this->accurals[] = $accural;
+            $accural->setUser($this);
+        }
+
+        return $this;
+    }
+
+    public function removeAccural(Accurals $accural): self
+    {
+        if ($this->accurals->removeElement($accural)) {
+            // set the owning side to null (unless already changed)
+            if ($accural->getUser() === $this) {
+                $accural->setUser(null);
             }
         }
 

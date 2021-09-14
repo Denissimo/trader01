@@ -5,6 +5,7 @@ namespace App\Service;
 use App\DTO\DealUnit;
 use App\DTO\LevelUnit;
 use App\Entity\User;
+use App\Entity\UserTree;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -83,6 +84,13 @@ class RewardCounter
             $user = $this->entityManager->getRepository(User::class)
                 ->find($dealUnit->userId);
 
+            $parent = $user->getParent();
+            $uid = $user->getId();
+            $parentsTree = $this->entityManager->getRepository(UserTree::class)
+                ->findParents($user);
+            foreach($parentsTree as $tree) {
+
+            }
             while($user->getParent() instanceof User) {
                 $parent = $user->getParent();
                 $parentLevelUnit = $this->levelTree[$parent->getId()] ?? new  LevelUnit($parent);
