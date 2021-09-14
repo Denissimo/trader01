@@ -47,7 +47,7 @@
                             </li>
                         </ul>
                         {% if app.user %}
-                            <a href="/logout"> <button class="btn btn-outline-danger" type="submit">Logout</button></a>
+                            {{ app.user.userIdentifier }} &nbsp; <a href="/logout"><button class="btn btn-outline-danger" type="submit">Logout</button></a>
                         {% else %}
                             <a href="/login"> <button class="btn btn-outline-primary" type="submit">Login</button></a>
                         {% endif %}
@@ -57,9 +57,8 @@
             </nav>
             <nav aria-label="breadcrumb">
                 <ol class="breadcrumb">
-                    <li class="breadcrumb-item"><a href="#">Home</a></li>
-                    <li class="breadcrumb-item"><a href="#">Library</a></li>
-                    <li class="breadcrumb-item active" aria-current="page">Data</li>
+                    <li class="breadcrumb-item"><a href="{{ path('main') }}">Home</a></li>
+                    <li class="breadcrumb-item"><a href="{{ path('account') }}">Account</a></li>
                 </ol>
             </nav>
             {% block body %}

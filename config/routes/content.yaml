@@ -13,3 +13,7 @@ deal:
 reward:
   path: /reward
   controller: App\Controller\ContentController::buildReward
+
+xlsx:
+  path: /xlsx
+  controller: App\Controller\ContentController::buildXlsxReport
