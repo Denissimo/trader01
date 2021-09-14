@@ -28,7 +28,17 @@ class RewardCounter
     /**
      * @var LevelUnit[]|array
      */
-    private $levelTree;
+    public $levelTree;
+
+    /**
+     * @var [][]
+     */
+    private $levels;
+
+    /**
+     * @var [][]
+     */
+    private $userTree = [];
 
     /**
      * RewardCounter constructor.
@@ -74,21 +84,60 @@ class RewardCounter
                 ->find($dealUnit->userId);
 
             while($user->getParent() instanceof User) {
-                $levelUnit =  new  LevelUnit();
                 $parent = $user->getParent();
+                $parentLevelUnit = $this->levelTree[$parent->getId()] ?? new  LevelUnit($parent);
+                $currentLevelUnit =  $this->levelTree[$user->getId()] ?? new  LevelUnit($user);
                 $dealUnit = new DealUnit($deal);
-                $levelUnit->pushDeal($dealUnit);
-                $this->levelTree[$parent->getId()][$user->getId()] = $levelUnit;
+                $currentLevelUnit->pushDeal($dealUnit);
+                $this->levelTree[$parent->getId()] = $parentLevelUnit;
+                $this->levelTree[$parent->getId()]->pushChild($currentLevelUnit);
+//                unset($this->levelTree[$user->getId()]);
+
+                $this->userTree[$parent->getId()][$user->getId()] = null;
+
                 $user = $parent;
             }
         }
 
+        foreach ($this->levelTree as $levelUnit) {
+            $this->levelTree[$levelUnit->getUser()->getId()] = $this->buildLevels($levelUnit);
+        }
+
+        ksort($this->userTree);
 
         return $this;
     }
 
-    private function countLevels(LevelUnit $levelUnit, int $level = 0)
+    private function buildLevels(LevelUnit $levelUnit, int $level = 0)
     {
+//        if ($level > User::LEVEL_MAX) {
+//            return $this;
+//        }
+        $children = $levelUnit->getChildren();
 
+        $newLevel = $level + 1;
+
+        if($newLevel < User::LEVEL_MAX && $levelUnit->getUser()->getParent() instanceof User) {
+            $parentId = $levelUnit->getUser()->getParent()->getId();
+            $userId = $levelUnit->getUser()->getId();
+            $this->levels[$parentId][$userId] = $newLevel;
+        }
+
+        foreach($children as $child) {
+            $levelUnitChild = $this->buildLevels($child, $newLevel);
+            $levelUnit->pushChild($levelUnitChild);
+        }
+
+//        $levelUnit->setLevel($level);
+//        $this->levelTree[$levelUnit->getUser()->getId()] = $levelUnit;
+
+        return $levelUnit;
+    }
+
+    private function countLevels(int $level = 0)
+    {
+        foreach ($this->userTree as $userUnit) {
+
+        }
     }
 }

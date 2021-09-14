@@ -22,6 +22,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
 
     public const DAFAULT_PASSWORD = '123456';
 
+    public const LEVEL_MAX = 10;
+
     /**
      * @ORM\Id
      * @ORM\GeneratedValue

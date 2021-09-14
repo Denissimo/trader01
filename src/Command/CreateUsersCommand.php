@@ -17,7 +17,7 @@ class CreateUsersCommand extends Command
 {
     const DEFAULT_QTY = 5000;
 
-    protected static $defaultName = 'app:users:generate';
+    protected static $defaultName = 'app:users:create';
 
     /**
      * @var int
@@ -52,7 +52,7 @@ class CreateUsersCommand extends Command
     protected function configure()
     {
         $this
-            ->setName('app:users:generate')
+            ->setName('app:users:create')
             ->setDescription('Its a DB Test.')
             ->setHelp('DB test command')
             ->addOption(

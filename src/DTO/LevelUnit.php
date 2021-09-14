@@ -7,6 +7,11 @@ use App\Entity\User;
 class LevelUnit
 {
     /**
+     * @var User
+     */
+    private $user;
+
+    /**
      * @var int
      */
     private $level;
@@ -21,10 +26,38 @@ class LevelUnit
      */
     private $deals;
 
+
     /**
      * @var LevelUnit[]|array
      */
-    private $children;
+    private $children = [];
+
+    /**
+     * LevelUnit constructor.
+     * @param User $user
+     */
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
+
+    /**
+     * @return User
+     */
+    public function getUser(): User
+    {
+        return $this->user;
+    }
+
+    /**
+     * @param User $user
+     * @return LevelUnit
+     */
+    public function setUser(User $user): LevelUnit
+    {
+        $this->user = $user;
+        return $this;
+    }
 
     /**
      * @return int
@@ -87,7 +120,8 @@ class LevelUnit
 
     public function pushChild(LevelUnit $levelUnit)
     {
-        $this->children[] = $levelUnit;
+        $userId = $levelUnit->user->getId();
+        $this->children[$userId] = $levelUnit;
     }
 
     /**

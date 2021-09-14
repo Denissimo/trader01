@@ -50,7 +50,7 @@ class ContentController extends AbstractController
 
     public function buildDeal()
     {
-        $deals = $this->gealGenerator->generate();
+        $deals = $this->gealGenerator->generate(50, 0);
 
         return new JsonResponse($deals);
     }
@@ -60,8 +60,9 @@ class ContentController extends AbstractController
         $rewards = $rewardCounter->getDeals();
         $rewardCounter->buildTree($rewards);
 
-        return $this->render('reward.html.twig', [
-            'rewards' => $rewards
-        ]);
+//        return $this->render('reward.html.twig', [
+//            'rewards' => $rewards
+//        ]);
+        return new JsonResponse($rewardCounter->levelTree);
     }
 }

@@ -2,9 +2,11 @@
 
 namespace App\Repository;
 
+use App\Entity\Account;
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 use Symfony\Component\Security\Core\Exception\UnsupportedUserException;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
@@ -17,9 +19,20 @@ use Symfony\Component\Security\Core\User\PasswordUpgraderInterface;
  */
 class UserRepository extends ServiceEntityRepository implements PasswordUpgraderInterface
 {
-    public function __construct(ManagerRegistry $registry)
+    public const DEFAULT_PASSWORD = '123456';
+
+    public const DEFAULT_PREFIX = 'user_';
+
+    /**
+     * @var UserPasswordEncoderInterface
+     */
+    private $passwordHasher;
+
+    public function __construct(ManagerRegistry $registry, UserPasswordEncoderInterface $passwordHasher)
     {
         parent::__construct($registry, User::class);
+
+        $this->passwordHasher = $passwordHasher;
     }
 
     /**
@@ -34,6 +47,57 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
         $user->setPassword($newHashedPassword);
         $this->_em->persist($user);
         $this->_em->flush();
+    }
+
+    /**
+     * @param User|null $parent
+     * @param string|null $username
+     * @param string $password
+     *
+     * @return User
+     *
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
+     * @throws \Doctrine\ORM\ORMException
+     */
+    public function create(?User $parent, string $username = null, string $password = self::DEFAULT_PASSWORD)
+    {
+        $user = new User();
+        $username = $username ?? $this->generateName();
+        $user->setUsername($username)
+            ->setParent($parent)
+            ->setPassword(
+                $this->passwordHasher->encodePassword(
+                    $user,
+                    $password
+                )
+            );
+        $this->getEntityManager()
+            ->persist($user);
+
+        $this->getEntityManager()
+            ->getRepository(Account::class)
+            ->createAccountForUser($user);
+
+        return $user;
+    }
+
+    /**
+     * @param string|null $prefix
+     *
+     * @return string
+     *
+     * @throws \Doctrine\DBAL\Driver\Exception
+     * @throws \Doctrine\DBAL\Exception
+     */
+    private function generateName(?string $prefix = self::DEFAULT_PREFIX)
+    {
+        $lastId = $this->getEntityManager()
+            ->getConnection()
+            ->executeQuery("SELECT last_value FROM user_id_seq")
+            ->fetchOne();
+
+        return sprintf('user_%d', $lastId);
     }
 
     // /**
