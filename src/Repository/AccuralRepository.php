@@ -3,8 +3,10 @@
 namespace App\Repository;
 
 use App\Entity\Accural;
+use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method Accural|null find($id, $lockMode = null, $lockVersion = null)
@@ -17,6 +19,24 @@ class AccuralRepository extends ServiceEntityRepository
     public function __construct(ManagerRegistry $registry)
     {
         parent::__construct($registry, Accural::class);
+    }
+
+    public function findByUserGroupByLevel(UserInterface $user)
+    {
+        $qb = $this->createQueryBuilder('a');
+
+        return $qb
+//            ->select('a')
+            ->select('count(a) as count')
+            ->addSelect('sum(a.amountUsd) as amountUsd')
+            ->addSelect('sum(a.amountBtc) as amountBtc')
+            ->addSelect('sum(a.amountEth) as amountEth')
+            ->andWhere('a.user = :val')
+            ->groupBy('a.level')
+            ->setParameter('val', $user)
+            ->getQuery()
+            ->getResult()
+            ;
     }
 
     // /**

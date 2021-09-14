@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\Entity\Accural;
 use App\Service\DealGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -43,14 +44,20 @@ class ContentController extends AbstractController
     {
         $user = $this->tokenStorage->getToken()->getUser();
 
+        $accurals = $this->getDoctrine()
+            ->getManager()
+            ->getRepository(Accural::class)
+            ->findByUserGroupByLevel($user);
+
         return $this->render('account.html.twig', [
-            'user' => $user
+            'user' => $user,
+            'accurals' => $accurals
         ]);
     }
 
     public function buildDeal()
     {
-        $deals = $this->gealGenerator->generate(50, 0);
+        $deals = $this->gealGenerator->generate(50, 500);
 
         return new JsonResponse($deals);
     }
