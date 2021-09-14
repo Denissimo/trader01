@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\AccuralReport;
 use App\Entity\Accural;
 use App\Entity\User;
 use App\Entity\UserTree;
@@ -51,24 +52,27 @@ class ContentController extends AbstractController
     public function buildAccount(string $urlSelf)
     {
         $user = $this->tokenStorage->getToken()->getUser();
-        $childrenCombile = $this->loadChildren($user);
-        $accuralCombile = $this->loadAccurals($user);
+        $accurals = $this->buildAccurals($user);
 
         return $this->render('account.html.twig', [
             'url_self' => $urlSelf,
             'user' => $user,
-            'children' => $childrenCombile,
-            'accurals' => $accuralCombile
+            'accurals' => $accurals
         ]);
     }
 
     public function buildXlsxReport(KernelInterface $kernel)
     {
         $user = $this->tokenStorage->getToken()->getUser();
-        $children = $this->loadChildren($user);
-        $accurals = $this->loadAccurals($user);
+        $accurals = $this->buildAccurals($user);
 
         $spreadsheet = new Spreadsheet();
+
+        $children = 0;
+        $awards = 0;
+        $amountUsd = 0;
+        $amountBtc = 0;
+        $amountEth = 0;
 
         /* @var $sheet \PhpOffice\PhpSpreadsheet\Writer\Xlsx\Worksheet */
         $sheet = $spreadsheet->getActiveSheet();
@@ -79,14 +83,28 @@ class ContentController extends AbstractController
         $sheet->setCellValue('E1', 'Amount BTC');
         $sheet->setCellValue('F1', 'Amount ETH');
 
-        foreach ($children as $num => $child) {
+
+        foreach ($accurals as $num => $accural) {
+            $children += $accural->getChildren();
+            $awards += $accural->getAwards();
+            $amountUsd += $accural->getAmountUsd();
+            $amountBtc += $accural->getAmountBtc();
+            $amountEth += $accural->getAmountEth();
+
             $sheet->setCellValue('A' . ($num + 1), $num);
-            $sheet->setCellValue('B' . ($num + 1), $child['count']);
-            $sheet->setCellValue('C' . ($num + 1), $accurals[$num]['count'] ?? 0);
-            $sheet->setCellValue('D' . ($num + 1), $accurals[$num]['amountUsd'] ?? 0);
-            $sheet->setCellValue('E' . ($num + 1), $accurals[$num]['amountBtc'] ?? 0);
-            $sheet->setCellValue('F' . ($num + 1), $accurals[$num]['amountEth'] ?? 0);
+            $sheet->setCellValue('B' . ($num + 1), $accural->getChildren());
+            $sheet->setCellValue('C' . ($num + 1), $accural->getAwards());
+            $sheet->setCellValue('D' . ($num + 1), $accural->getAmountUsd());
+            $sheet->setCellValue('E' . ($num + 1), $accural->getAmountBtc());
+            $sheet->setCellValue('F' . ($num + 1), $accural->getAmountEth());
         }
+
+        $sheet->setCellValue('A' . ($num + 1), 'Total:');
+        $sheet->setCellValue('B' . ($num + 1), $children);
+        $sheet->setCellValue('C' . ($num + 1), $awards);
+        $sheet->setCellValue('D' . ($num + 1), $amountUsd);
+        $sheet->setCellValue('E' . ($num + 1), $amountBtc);
+        $sheet->setCellValue('F' . ($num + 1), $amountEth);
 
         $sheet->setTitle("XLSX REPORT");
 
@@ -119,8 +137,23 @@ class ContentController extends AbstractController
         return new JsonResponse($rewardStat);
     }
 
-    private function loadChildren(UserInterface $user)
+    /**
+     * @param UserInterface $user
+     *
+     * @return AccuralReport[]|array
+     */
+    private function buildAccurals(UserInterface $user)
     {
+        $accuralReports = [];
+        $accurals = $this->getDoctrine()
+            ->getManager()
+            ->getRepository(Accural::class)
+            ->findByUserGroupByLevel($user);
+
+        $accuralLevels = array_column($accurals, 'level');
+
+        $accuralsCombine = array_combine($accuralLevels, $accurals);
+
         $childrenGrouped = $this->getDoctrine()
             ->getManager()
             ->getRepository(UserTree::class)
@@ -129,19 +162,19 @@ class ContentController extends AbstractController
 
         $childrenLevels = array_column($childrenGrouped, 'level');
 
-        return array_combine($childrenLevels, $childrenGrouped);
-    }
+        $childrenCombine = array_combine($childrenLevels, $childrenGrouped);
 
-    private function loadAccurals(UserInterface $user)
-    {
-        $accurals = $this->getDoctrine()
-            ->getManager()
-            ->getRepository(Accural::class)
-            ->findByUserGroupByLevel($user);
+        foreach ($childrenCombine as $key => $child) {
+            $accuralReports[$key] = new AccuralReport(
+                $child['level'],
+                $child['count'],
+                $accuralsCombine[$key]['count'] ?? 0,
+                $accuralsCombine[$key]['amountUsd'] ?? 0,
+                $accuralsCombine[$key]['amountBtc'] ?? 0,
+                $accuralsCombine[$key]['amountEth'] ?? 0
+            );
+        }
 
-        $accuralLevels = array_column($accurals, 'level');
-
-        return array_combine($accuralLevels, $accurals);
-
+        return $accuralReports;
     }
 }

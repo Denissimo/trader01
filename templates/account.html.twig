@@ -23,7 +23,12 @@
     </div>
     <div class="row mt-3 mb-3">
         <div class="col-12">
-            {% if children is defined and children is not empty %}
+            {% if accurals is defined and accurals is not empty %}
+                {% set children = 0 %}
+                {% set awards = 0 %}
+                {% set amountUsd = 0 %}
+                {% set amountBtc = 0 %}
+                {% set amountEth = 0 %}
                 <table class="table table-striped">
                     <tr class="bg-info">
                         <th>Level</th>
@@ -33,25 +38,29 @@
                         <th>Amount BTC</th>
                         <th>Amount ETH</th>
                     </tr>
-                    {% for num, child in children %}
+                    {% for num, accural in accurals %}
+                        {% set children = children + accural.children %}
+                        {% set awards = awards + accural.awards %}
+                        {% set amountUsd = amountUsd + accural.amountUsd %}
+                        {% set amountBtc = amountBtc + accural.amountBtc %}
+                        {% set amountEth = amountEth + accural.amountEth %}
                         <tr>
-                            <td>{{ child.level }}</td>
-                            <td>{{ child.count }} </td>
-                            {% if accurals[num] is defined %}
-                                <td>{{ accurals[num].count }}</td>
-                                <td>{{ accurals[num].amountUsd }}</td>
-                                <td>{{ accurals[num].amountBtc }}</td>
-                                <td>{{ accurals[num].amountEth }}</td>
-                            {% else %}
-                                <td>0</td>
-                                <td>0</td>
-                                <td>0</td>
-                                <td>0</td>
-                            {% endif %}
-
-
+                            <td>{{ accural.level }}</td>
+                            <td>{{ accural.children }} </td>
+                            <td>{{ accural.awards }} </td>
+                            <td>{{ accural.amountUsd }} </td>
+                            <td>{{ accural.amountBtc }} </td>
+                            <td>{{ accural.amountEth }} </td>
                         </tr>
                     {% endfor %}
+                    <tr>
+                        <td><b>Total:</b></td>
+                        <td><b>{{ children }} </b></td>
+                        <td><b>{{ awards }} </b></td>
+                        <td><b>{{ amountUsd }} </b></td>
+                        <td><b>{{ amountBtc }} </b></td>
+                        <td><b>{{ amountEth }} </b></td>
+                    </tr>
                 </table>
             {% endif %}
         </div>

@@ -39,7 +39,6 @@ class Accural
      */
     private $amountEth;
 
-
     /**
      * @ORM\ManyToOne(targetEntity=User::class)
      */
