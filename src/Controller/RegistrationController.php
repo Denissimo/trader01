@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Account;
 use App\Entity\Purse;
 use App\Entity\User;
+use App\Entity\UserTree;
 use App\Form\RegistrationFormType;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\Form\FormError;
@@ -68,6 +69,8 @@ class RegistrationController extends AbstractController
                 ->createPursesForUser($user);
             $entityManager->getRepository(Account::class)
                 ->createAccountForUser($user);
+            $entityManager->getRepository(UserTree::class)
+                ->buildTree($user);
 
             $entityManager->flush();
             // do anything else you need here, like send an email

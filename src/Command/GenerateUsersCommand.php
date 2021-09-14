@@ -15,7 +15,7 @@ use \Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
 
 class GenerateUsersCommand extends Command
 {
-    const DEFAULT_LEVELS = 12;
+    const DEFAULT_LEVELS = 14;
     const USERS_MAX = 3;
 
     protected static $defaultName = 'app:users:generate';
@@ -72,7 +72,8 @@ class GenerateUsersCommand extends Command
         try {
             $usersMin = 3;
             $usersNumber = rand($usersMin, self::USERS_MAX);
-            $currentUsersList = array_fill(0, $usersNumber, null);
+//            $currentUsersList = array_fill(0, $usersNumber, null);
+            $currentUsersList = [null];
             for ($level = 0; $level < $levels; $level++) {
                 $newUsersList = [];
                 foreach ($currentUsersList as $parent) {
@@ -98,7 +99,6 @@ class GenerateUsersCommand extends Command
                 $usersMin = 0;
             }
             $this->entityManager->flush();
-
         } catch (Throwable $e) {
             $this->output->writeln($e->getMessage());
 

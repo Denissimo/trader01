@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\Account;
 use App\Entity\User;
+use App\Entity\UserTree;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
@@ -72,12 +73,17 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
                     $password
                 )
             );
+
         $this->getEntityManager()
             ->persist($user);
 
         $this->getEntityManager()
             ->getRepository(Account::class)
             ->createAccountForUser($user);
+
+        $this->getEntityManager()
+            ->getRepository(UserTree::class)
+            ->buildTree($user);
 
         return $user;
     }
