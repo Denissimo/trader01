@@ -63,11 +63,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $hash;
 
     /**
-     * @ORM\OneToMany(targetEntity=Purse::class, mappedBy="user", orphanRemoval=true)
-     */
-    private $purses;
-
-    /**
      * @ORM\Column(type="datetime_immutable", options={"default": "CURRENT_TIMESTAMP"})
      *  @Gedmo\Timestampable(on="create")
      */
@@ -107,7 +102,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function __construct()
     {
         $this->children = new ArrayCollection();
-        $this->purses = new ArrayCollection();
         $this->deals = new ArrayCollection();
         $this->childUsers = new ArrayCollection();
         $this->parentUsers = new ArrayCollection();
@@ -249,36 +243,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     public function setHash(?string $hash): self
     {
         $this->hash = $hash;
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|Purse[]
-     */
-    public function getPurses(): Collection
-    {
-        return $this->purses;
-    }
-
-    public function addPurse(Purse $purse): self
-    {
-        if (!$this->purses->contains($purse)) {
-            $this->purses[] = $purse;
-            $purse->setUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removePurse(Purse $purse): self
-    {
-        if ($this->purses->removeElement($purse)) {
-            // set the owning side to null (unless already changed)
-            if ($purse->getUser() === $this) {
-                $purse->setUser(null);
-            }
-        }
 
         return $this;
     }

@@ -3,7 +3,6 @@
 namespace App\Controller;
 
 use App\Entity\Account;
-use App\Entity\Purse;
 use App\Entity\User;
 use App\Entity\UserTree;
 use App\Form\RegistrationFormType;
@@ -65,8 +64,6 @@ class RegistrationController extends AbstractController
             $user->setParent($parent ?? null);
 
             $entityManager->persist($user);
-            $entityManager->getRepository(Purse::class)
-                ->createPursesForUser($user);
             $entityManager->getRepository(Account::class)
                 ->createAccountForUser($user);
             $entityManager->getRepository(UserTree::class)

@@ -3,7 +3,6 @@
 namespace App\Command;
 
 use App\Entity\Account;
-use App\Entity\Purse;
 use App\Entity\User;
 use Throwable;
 use Symfony\Component\Console\Command\Command;
@@ -71,8 +70,6 @@ class GenerateUsersCommand extends Command
     {
         try {
             $usersMin = 3;
-            $usersNumber = rand($usersMin, self::USERS_MAX);
-//            $currentUsersList = array_fill(0, $usersNumber, null);
             $currentUsersList = [null];
             for ($level = 0; $level < $levels; $level++) {
                 $newUsersList = [];

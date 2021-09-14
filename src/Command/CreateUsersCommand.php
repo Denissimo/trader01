@@ -3,7 +3,6 @@
 namespace App\Command;
 
 use App\Entity\Account;
-use App\Entity\Purse;
 use App\Entity\User;
 use Throwable;
 use Symfony\Component\Console\Command\Command;
@@ -103,8 +102,6 @@ class CreateUsersCommand extends Command
                     );
                 $this->entityManager->persist($user);
 
-                $this->entityManager->getRepository(Purse::class)
-                    ->createPursesForUser($user);
                 $this->entityManager->getRepository(Account::class)
                     ->createAccountForUser($user);
 
