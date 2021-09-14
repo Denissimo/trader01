@@ -41,6 +41,9 @@ class DealGenerator
             $amountUsd = rand(0, 1) ? rand(0, self::RANDOM_MAX) / 10**Account::SCALE_USD : 0;
             $amountBtc = rand(0, 1) ? rand(0,self::RANDOM_MAX) / 10**Account::SCALE_BTC : 0;
             $amountEth= rand(0, 1) ? rand(0,self::RANDOM_MAX) / 10**Account::SCALE_ETH : 0;
+            if (!$amountUsd && @$amountBtc && !$amountEth) {
+                $amountUsd = 1.0;
+            }
             $balanceUsd = $user->getAccount()->getAmountUsd();
             $balanceBtc = $user->getAccount()->getAmountBtc();
             $balanceEth = $user->getAccount()->getAmountEth();
@@ -84,6 +87,10 @@ class DealGenerator
             ->setFirstResult($offset)
             ->orderBy(['id' => 'ASC'])
         ;
+//        $criteria = Criteria::create()->setMaxResults(1)
+//            ->setFirstResult(540)
+//            ->orderBy(['id' => 'ASC'])
+//        ;
 
         return $this->entityManager->getRepository(User::class)
             ->matching($criteria)

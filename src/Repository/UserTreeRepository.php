@@ -6,6 +6,7 @@ use App\Entity\User;
 use App\Entity\UserTree;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
+use Symfony\Component\Security\Core\User\UserInterface;
 
 /**
  * @method UserTree|null find($id, $lockMode = null, $lockVersion = null)
@@ -53,13 +54,42 @@ class UserTreeRepository extends ServiceEntityRepository
         return $this;
     }
 
-    public function findParents(User $user)
+    public function findChildren(User $user)
     {
         return $this->createQueryBuilder('u')
             ->andWhere('u.childUser = :val')
             ->setParameter('val', $user)
             ->orderBy('u.id', 'ASC')
             ->getQuery()
+            ->getResult()
+            ;
+    }
+
+    public function findParents(User $user)
+    {
+        return $this->createQueryBuilder('u')
+            ->andWhere('u.parentUser = :val')
+            ->setParameter('val', $user)
+            ->orderBy('u.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+            ;
+    }
+
+
+    public function findChildrenGroupByLevel(UserInterface $user)
+    {
+        $qb = $this->createQueryBuilder('u');
+
+        $res = $qb
+            ->select('u.level')
+            ->addSelect('count(u) as count')
+            ->andWhere('u.parentUser = :val')
+            ->groupBy('u.level')
+            ->orderBy('u.level')
+            ->setParameter('val', $user);
+
+        return $res->getQuery()
             ->getResult()
             ;
     }

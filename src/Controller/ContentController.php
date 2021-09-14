@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Accural;
+use App\Entity\UserTree;
 use App\Service\DealGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
@@ -49,15 +50,28 @@ class ContentController extends AbstractController
             ->getRepository(Accural::class)
             ->findByUserGroupByLevel($user);
 
+        $childrenGrouped = $this->getDoctrine()
+            ->getManager()
+            ->getRepository(UserTree::class)
+            ->findChildrenGroupByLevel($user);
+
+
+        $childrenLevels = array_column($childrenGrouped, 'level');
+        $childrenCombile = array_combine($childrenLevels, $childrenGrouped);
+        $accuralLevels = array_column($accurals, 'level');
+        $accuralCombile = array_combine($accuralLevels, $accurals);
+
+
         return $this->render('account.html.twig', [
             'user' => $user,
-            'accurals' => $accurals
+            'children' => $childrenCombile,
+            'accurals' => $accuralCombile
         ]);
     }
 
     public function buildDeal()
     {
-        $deals = $this->gealGenerator->generate(50, 500);
+        $deals = $this->gealGenerator->generate(50);
 
         return new JsonResponse($deals);
     }

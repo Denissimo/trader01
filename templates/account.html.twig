@@ -1,28 +1,62 @@
 {% extends 'finance.html.twig' %}
 {% block body %}
-<div class="row mt-3 mb-3">
-    <div class="col-6">
-        <div class="card">
-            <h5 class="card-header">Account</h5>
-            <div class="card-body">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
+    <div class="row mt-3 mb-3">
+        <div class="col-12">
+            <div class="card">
+                <h5 class="card-header">Account</h5>
+                <div class="card-body">
+                    <h5 class="card-title">Send referal code to your friend</h5>
+                    <div class="row mb-3">
+                        <div class="col-12">
+                            <input type="text" class="form-control" id="referal_link" value="{{ user.hash }}">
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-12">
+                            <a href="#" class="btn btn-primary">Copy</a>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
+
     </div>
-    <div class="col-6">
-        <div class="card">
-            <h5 class="card-header">Featured</h5>
-            <div class="card-body">
-                <h5 class="card-title">Special title treatment</h5>
-                <p class="card-text">With supporting text below as a natural lead-in to additional content.</p>
-                <a href="#" class="btn btn-primary">Go somewhere</a>
-            </div>
+    <div class="row mt-3 mb-3">
+        <div class="col-12">
+            {% if children is defined and children is not empty %}
+                <table class="table table-striped">
+                    <tr class="bg-info">
+                        <th>Level</th>
+                        <th>Children</th>
+                        <th>Awards</th>
+                        <th>Amount USD</th>
+                        <th>Amount BTC</th>
+                        <th>Amount ETH</th>
+                    </tr>
+                    {% for num, child in children %}
+                        <tr>
+                            <td>{{ child.level }}</td>
+                            <td>{{ child.count }} </td>
+                            {% if accurals[num] is defined %}
+                                <td>{{ accurals[num].count }}</td>
+                                <td>{{ accurals[num].amountUsd }}</td>
+                                <td>{{ accurals[num].amountBtc }}</td>
+                                <td>{{ accurals[num].amountEth }}</td>
+                            {% else %}
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                                <td>0</td>
+                            {% endif %}
+
+
+                        </tr>
+                    {% endfor %}
+                </table>
+            {% endif %}
         </div>
+{#        {{ dump(user) }}#}
+{#        {{ dump(children) }}#}
+{#        {{ dump(accurals) }}#}
     </div>
-</div>
-<div class="row mt-3 mb-3">
-    {{ dump(accurals) }}
-</div>
 {% endblock %}

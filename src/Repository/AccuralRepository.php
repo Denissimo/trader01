@@ -25,16 +25,20 @@ class AccuralRepository extends ServiceEntityRepository
     {
         $qb = $this->createQueryBuilder('a');
 
-        return $qb
+        $res = $qb
 //            ->select('a')
-            ->select('count(a) as count')
+            ->select('a.level')
+            ->addSelect('count(a) as count')
             ->addSelect('sum(a.amountUsd) as amountUsd')
             ->addSelect('sum(a.amountBtc) as amountBtc')
             ->addSelect('sum(a.amountEth) as amountEth')
             ->andWhere('a.user = :val')
             ->groupBy('a.level')
-            ->setParameter('val', $user)
-            ->getQuery()
+            ->orderBy('a.level')
+            ->setParameter('val', $user);
+        $dql = $qb->getDQL();
+
+            return $res->getQuery()
             ->getResult()
             ;
     }
