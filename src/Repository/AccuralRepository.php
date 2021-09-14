@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\Accurals;
+use App\Entity\Accural;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Accurals|null find($id, $lockMode = null, $lockVersion = null)
- * @method Accurals|null findOneBy(array $criteria, array $orderBy = null)
- * @method Accurals[]    findAll()
- * @method Accurals[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Accural|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Accural|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Accural[]    findAll()
+ * @method Accural[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class AccuralsRepository extends ServiceEntityRepository
+class AccuralRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Accurals::class);
+        parent::__construct($registry, Accural::class);
     }
 
     // /**
-    //  * @return Accurals[] Returns an array of Accurals objects
+    //  * @return Accural[] Returns an array of Accural objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class AccuralsRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?Accurals
+    public function findOneBySomeField($value): ?Accural
     {
         return $this->createQueryBuilder('a')
             ->andWhere('a.exampleField = :val')

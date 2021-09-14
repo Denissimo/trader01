@@ -2,13 +2,14 @@
 
 namespace App\Entity;
 
-use App\Repository\AccuralsRepository;
+use App\Repository\AccuralRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Gedmo\Mapping\Annotation as Gedmo;
 
 /**
- * @ORM\Entity(repositoryClass=AccuralsRepository::class)
+ * @ORM\Entity(repositoryClass=AccuralRepository::class)
  */
-class Accurals
+class Accural
 {
     /**
      * @ORM\Id
@@ -24,24 +25,30 @@ class Accurals
     private $user;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="decimal", precision=21, scale=5, options={"default":0})
      */
     private $amountUsd;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="decimal", precision=22, scale=11, options={"default":0})
      */
     private $amountBtc;
 
     /**
-     * @ORM\Column(type="float")
+     * @ORM\Column(type="decimal", precision=32, scale=21, options={"default":0})
      */
-    private $amountEtn;
+    private $amountEth;
+
 
     /**
      * @ORM\ManyToOne(targetEntity=User::class)
      */
     private $sourceUser;
+
+    /**
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $level;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
@@ -50,11 +57,13 @@ class Accurals
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Gedmo\Timestampable(on="create")
      */
     private $createdAt;
 
     /**
      * @ORM\Column(type="datetime_immutable")
+     * @Gedmo\Timestampable(on="update")
      */
     private $updatedAt;
 
@@ -99,14 +108,14 @@ class Accurals
         return $this;
     }
 
-    public function getAmountEtn(): ?float
+    public function getAmountEth(): ?float
     {
-        return $this->amountEtn;
+        return $this->amountEth;
     }
 
-    public function setAmountEtn(float $amountEtn): self
+    public function setAmountEth(float $amountEth): self
     {
-        $this->amountEtn = $amountEtn;
+        $this->amountEth = $amountEth;
 
         return $this;
     }
@@ -155,6 +164,18 @@ class Accurals
     public function setUpdatedAt(\DateTimeImmutable $updatedAt): self
     {
         $this->updatedAt = $updatedAt;
+
+        return $this;
+    }
+
+    public function getLevel(): ?int
+    {
+        return $this->level;
+    }
+
+    public function setLevel(?int $level): self
+    {
+        $this->level = $level;
 
         return $this;
     }

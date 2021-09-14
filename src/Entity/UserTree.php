@@ -10,7 +10,20 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class UserTree
 {
-    const PARENT_LEVEL_MAX = 10;
+    public const PARENT_LEVEL_MAX = 10;
+
+    public static $levels = [
+        1 => 0.15,
+        2 => 0.10,
+        3 => 0.08,
+        4 => 0.06,
+        5 => 0.04,
+        6 => 0.03,
+        7 => 0.02,
+        8 => 0.01,
+        9 => 0.005,
+        10 => 0.005
+    ];
 
     /**
      * @ORM\Id

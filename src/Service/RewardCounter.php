@@ -4,6 +4,8 @@ namespace App\Service;
 
 use App\DTO\DealUnit;
 use App\DTO\LevelUnit;
+use App\DTO\RewardsStat;
+use App\Entity\Accural;
 use App\Entity\User;
 use App\Entity\UserTree;
 use Doctrine\ORM\EntityManagerInterface;
@@ -31,15 +33,6 @@ class RewardCounter
      */
     public $levelTree;
 
-    /**
-     * @var [][]
-     */
-    private $levels;
-
-    /**
-     * @var [][]
-     */
-    private $userTree = [];
 
     /**
      * RewardCounter constructor.
@@ -72,80 +65,74 @@ class RewardCounter
     /**
      * @param array $deals
      *
-     * @return $this
+     * @return RewardsStat
      */
     public function buildTree(array $deals)
     {
-        /** @var User[]|array $users */
-        $users = [];
+        $dealsCount = count($deals);
+        $userList = [];
         foreach ($deals as $deal) {
             $dealUnit = new DealUnit($deal);
             /** @var User $user */
             $user = $this->entityManager->getRepository(User::class)
                 ->find($dealUnit->userId);
-
-            $parent = $user->getParent();
-            $uid = $user->getId();
+            $userList[$user->getId()] = null;
+            /** @var UserTree[]|array $parentsTree */
             $parentsTree = $this->entityManager->getRepository(UserTree::class)
                 ->findParents($user);
+            $summaryAmountUsd = 0;
+            $summaryAmountBtc = 0;
+            $summaryAmountEth = 0;
+
+            $summaryAwardUsd = 0;
+            $summaryAwardBtc = 0;
+            $summaryAwardEth = 0;
+
             foreach($parentsTree as $tree) {
+                $level = $tree->getLevel();
+                $parent = $tree->getParentUser();
+                $percent = UserTree::$levels[$level];
+                $awardUsd = $dealUnit->amountUsd * $percent;
+                $awardBtc = $dealUnit->amountBtc * $percent;
+                $awardEth = $dealUnit->amountEth * $percent;
+                
+                $summaryAmountUsd += $dealUnit->amountUsd;
+                $summaryAmountBtc += $dealUnit->amountBtc;
+                $summaryAmountEth += $dealUnit->amountEth;
+                
+                $summaryAwardUsd += $awardUsd;
+                $summaryAwardBtc += $awardBtc;
+                $summaryAwardEth += $awardEth;
 
+                
+                $accural = (new Accural())
+                    ->setUser($parent)
+                    ->setSourceUser($user)
+                    ->setLevel($level)
+                    ->setAmountUsd($awardUsd)
+                    ->setAmountBtc($awardBtc)
+                    ->setAmountEth($awardEth)
+                    ->setComment('Authomatical rewards count')
+                ;
+                
+
+                $this->entityManager
+                    ->persist($accural);
             }
-            while($user->getParent() instanceof User) {
-                $parent = $user->getParent();
-                $parentLevelUnit = $this->levelTree[$parent->getId()] ?? new  LevelUnit($parent);
-                $currentLevelUnit =  $this->levelTree[$user->getId()] ?? new  LevelUnit($user);
-                $dealUnit = new DealUnit($deal);
-                $currentLevelUnit->pushDeal($dealUnit);
-                $this->levelTree[$parent->getId()] = $parentLevelUnit;
-                $this->levelTree[$parent->getId()]->pushChild($currentLevelUnit);
-//                unset($this->levelTree[$user->getId()]);
-
-                $this->userTree[$parent->getId()][$user->getId()] = null;
-
-                $user = $parent;
-            }
+            $this->entityManager->flush();
         }
 
-        foreach ($this->levelTree as $levelUnit) {
-            $this->levelTree[$levelUnit->getUser()->getId()] = $this->buildLevels($levelUnit);
-        }
+        $rewardStat = new RewardsStat(
+            $dealsCount,
+            count($userList),
+            $summaryAmountUsd,
+            $summaryAmountBtc,
+            $summaryAmountEth,
+            $summaryAwardUsd,
+            $summaryAwardBtc,
+            $summaryAwardEth
+        );
 
-        ksort($this->userTree);
-
-        return $this;
-    }
-
-    private function buildLevels(LevelUnit $levelUnit, int $level = 0)
-    {
-//        if ($level > User::LEVEL_MAX) {
-//            return $this;
-//        }
-        $children = $levelUnit->getChildren();
-
-        $newLevel = $level + 1;
-
-        if($newLevel < User::LEVEL_MAX && $levelUnit->getUser()->getParent() instanceof User) {
-            $parentId = $levelUnit->getUser()->getParent()->getId();
-            $userId = $levelUnit->getUser()->getId();
-            $this->levels[$parentId][$userId] = $newLevel;
-        }
-
-        foreach($children as $child) {
-            $levelUnitChild = $this->buildLevels($child, $newLevel);
-            $levelUnit->pushChild($levelUnitChild);
-        }
-
-//        $levelUnit->setLevel($level);
-//        $this->levelTree[$levelUnit->getUser()->getId()] = $levelUnit;
-
-        return $levelUnit;
-    }
-
-    private function countLevels(int $level = 0)
-    {
-        foreach ($this->userTree as $userUnit) {
-
-        }
+        return $rewardStat;
     }
 }
