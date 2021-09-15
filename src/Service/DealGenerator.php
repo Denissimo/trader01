@@ -41,7 +41,7 @@ class DealGenerator
             $amountUsd = rand(0, 1) ? rand(0, self::RANDOM_MAX) / 10**Account::SCALE_USD : 0;
             $amountBtc = rand(0, 1) ? rand(0,self::RANDOM_MAX) / 10**Account::SCALE_BTC : 0;
             $amountEth= rand(0, 1) ? rand(0,self::RANDOM_MAX) / 10**Account::SCALE_ETH : 0;
-            if (!$amountUsd && @$amountBtc && !$amountEth) {
+            if (!$amountUsd && !$amountBtc && !$amountEth) {
                 $amountUsd = 1.0;
             }
             $balanceUsd = $user->getAccount()->getAmountUsd();

@@ -32,6 +32,11 @@ class ContentController extends AbstractController
     private $gealGenerator;
 
     /**
+     * @var array
+     */
+    private $children = [];
+
+    /**
      * ContentController constructor.
      *
      * @param TokenStorageInterface $tokenStorage
@@ -41,6 +46,7 @@ class ContentController extends AbstractController
     {
         $this->tokenStorage = $tokenStorage;
         $this->gealGenerator = $gealGenerator;
+        $this->children = array_fill(1, 10, 0);
     }
 
 
@@ -154,20 +160,14 @@ class ContentController extends AbstractController
 
         $accuralsCombine = array_combine($accuralLevels, $accurals);
 
-        $childrenGrouped = $this->getDoctrine()
-            ->getManager()
-            ->getRepository(UserTree::class)
-            ->findChildrenGroupByLevel($user);
+        /** @var User $currentUser */
+        $currentUser = $user;
+        $this->countChildren($currentUser);
 
-
-        $childrenLevels = array_column($childrenGrouped, 'level');
-
-        $childrenCombine = array_combine($childrenLevels, $childrenGrouped);
-
-        foreach ($childrenCombine as $key => $child) {
+        foreach ($this->children as $key => $number) {
             $accuralReports[$key] = new AccuralReport(
-                $child['level'],
-                $child['count'],
+                $key,
+                $number,
                 $accuralsCombine[$key]['count'] ?? 0,
                 $accuralsCombine[$key]['amountUsd'] ?? 0,
                 $accuralsCombine[$key]['amountBtc'] ?? 0,
@@ -176,5 +176,33 @@ class ContentController extends AbstractController
         }
 
         return $accuralReports;
+    }
+
+    /**
+     * @param User $user
+     * @param int $level
+     *
+     * @return $this
+     */
+    private function countChildren(User $user, int $level = 0)
+    {
+        $level++;
+        if ($level > User::PARENT_LEVEL_MAX) {
+
+            return $this;
+        }
+        $children = $user->getChildren()->toArray();
+        $number = count($children);
+        if (!$number) {
+
+            return $this;
+        }
+
+        $this->children[$level] += $number;
+        foreach ($children as $child) {
+            $this->countChildren($child, $level);
+        }
+
+        return $this;
     }
 }
