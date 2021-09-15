@@ -80,10 +80,6 @@ class UserRepository extends ServiceEntityRepository implements PasswordUpgrader
             ->getRepository(Account::class)
             ->createAccountForUser($user);
 
-        $this->getEntityManager()
-            ->getRepository(UserTree::class)
-            ->buildTree($user);
-
         return $user;
     }
 
