@@ -98,16 +98,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private $deals;
 
     /**
-     * @ORM\OneToMany(targetEntity=UserTree::class, mappedBy="childUser", orphanRemoval=true)
-     */
-    private $childUsers;
-
-    /**
-     * @ORM\OneToMany(targetEntity=UserTree::class, mappedBy="parentUser", orphanRemoval=true)
-     */
-    private $parentUsers;
-
-    /**
      * @ORM\OneToMany(targetEntity=Accural::class, mappedBy="user", orphanRemoval=true)
      */
     private $accurals;
@@ -330,66 +320,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
             // set the owning side to null (unless already changed)
             if ($deal->getUser() === $this) {
                 $deal->setUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|UserTree[]
-     */
-    public function getChildUsers(): Collection
-    {
-        return $this->childUsers;
-    }
-
-    public function addChildUser(UserTree $childUser): self
-    {
-        if (!$this->childUsers->contains($childUser)) {
-            $this->childUsers[] = $childUser;
-            $childUser->setChildUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeChildUser(UserTree $childUser): self
-    {
-        if ($this->childUsers->removeElement($childUser)) {
-            // set the owning side to null (unless already changed)
-            if ($childUser->getChildUser() === $this) {
-                $childUser->setChildUser(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
-     * @return Collection|UserTree[]
-     */
-    public function getParentUsers(): Collection
-    {
-        return $this->parentUsers;
-    }
-
-    public function addParentUser(UserTree $parentUser): self
-    {
-        if (!$this->parentUsers->contains($parentUser)) {
-            $this->parentUsers[] = $parentUser;
-            $parentUser->setParentUser($this);
-        }
-
-        return $this;
-    }
-
-    public function removeParentUser(UserTree $parentUser): self
-    {
-        if ($this->parentUsers->removeElement($parentUser)) {
-            // set the owning side to null (unless already changed)
-            if ($parentUser->getParentUser() === $this) {
-                $parentUser->setParentUser(null);
             }
         }
 

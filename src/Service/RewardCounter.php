@@ -6,7 +6,6 @@ use App\DTO\DealUnit;
 use App\DTO\LevelUnit;
 use App\Entity\Accural;
 use App\Entity\User;
-use App\Entity\UserTree;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 

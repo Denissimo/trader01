@@ -5,7 +5,6 @@ namespace App\Controller;
 use App\DTO\AccuralReport;
 use App\Entity\Accural;
 use App\Entity\User;
-use App\Entity\UserTree;
 use App\Service\DealGenerator;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;

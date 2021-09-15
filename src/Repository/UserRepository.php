@@ -4,7 +4,6 @@ namespace App\Repository;
 
 use App\Entity\Account;
 use App\Entity\User;
-use App\Entity\UserTree;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
 use Symfony\Component\Security\Core\Encoder\UserPasswordEncoderInterface;
